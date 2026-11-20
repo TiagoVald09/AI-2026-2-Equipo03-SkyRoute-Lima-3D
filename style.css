@@ -30,3 +30,261 @@
 .lab-details p{padding-top:9px}
 #experimentBody tr.best-experiment td{color:#b5f1d5}
 @media(max-width:700px){.lab-subsections{grid-template-columns:1fr}.lab-controls label{min-width:100px}}
+
+/* Ajustes de tamaño y distribución */
+.workspace > *,
+.stat,
+.lab-subsections > * {
+  min-width: 0;
+}
+
+.page-heading,
+.section-heading,
+.audio-heading,
+.scene-bottom {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.heading-tag,
+.control-icon,
+.brand-icon {
+  flex-shrink: 0;
+}
+
+.stat-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+}
+
+.stat,
+.control,
+.lab-subsections {
+  overflow-wrap: anywhere;
+}
+
+/* Evita que títulos, clima y alertas se superpongan al mapa */
+.scene-top {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 14px;
+  background: #101d29;
+}
+
+.scene-top > div:first-child {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.scene-title {
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.scene-badges {
+  flex-wrap: wrap;
+}
+
+.scene-badges span {
+  height: auto;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.map-caption {
+  position: static;
+  padding: 0 21px 14px;
+  background: #101d29;
+  line-height: 1.6;
+}
+
+.encounter-alert {
+  position: static;
+  max-width: none;
+  margin: 12px;
+  line-height: 1.5;
+}
+
+.scene-bottom {
+  padding: 14px 20px;
+  line-height: 1.6;
+}
+
+/* Controles más cómodos y legibles */
+button,
+select,
+#suspectCount,
+.lab-controls input {
+  min-height: 44px;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+.primary,
+.action-row button {
+  height: auto;
+  padding: 12px;
+}
+
+.text-button {
+  padding: 10px 12px;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+.table-wrap:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.control label,
+.field-help,
+.table-note {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.field-help,
+.table-note,
+.stat small {
+  color: #a0b4c5;
+}
+
+.toggle-row {
+  gap: 16px;
+}
+
+.toggle-row input {
+  flex-shrink: 0;
+}
+
+/* Área táctil amplia con una pista delgada */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  height: 44px;
+  margin: 4px 0;
+  background: transparent;
+}
+
+.audio-controls input[type="range"] {
+  margin: 4px 0 10px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 6px;
+  background: #365365;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  border: 2px solid #10202d;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 6px;
+  background: #365365;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--cyan);
+  border: 2px solid #10202d;
+}
+
+/* Conserva el desplazamiento dentro de las tablas */
+.table-wrap {
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+}
+
+footer {
+  flex-wrap: wrap;
+  gap: 12px;
+  line-height: 1.7;
+}
+
+@media (max-width: 1000px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    height: auto;
+    min-height: 72px;
+    padding: 16px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .page-heading h1 {
+    font-size: clamp(25px, 7vw, 29px);
+  }
+
+  .control,
+  .results {
+    padding: 16px;
+  }
+
+  .scene-top {
+    padding: 15px;
+  }
+
+  .scene-badges span:first-child {
+    display: inline-flex;
+  }
+
+  .map-caption {
+    padding: 0 15px 14px;
+  }
+
+  #scene {
+    height: clamp(260px, 65vw, 340px);
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-heading > div {
+    flex: 1 1 100%;
+  }
+
+  .control select,
+  #suspectCount,
+  .lab-controls input {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .stat-grid,
+  .action-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
