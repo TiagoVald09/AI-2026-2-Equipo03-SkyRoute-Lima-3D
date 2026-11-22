@@ -5,7 +5,7 @@
 'use strict';
 const SIZE={x:12,y:12,z:3}, START={x:0,y:0,z:2};
 const CLIMATES={clear:{time:1,energy:1},cloudy:{time:1.1,energy:1.05},rain:{time:1.4,energy:1.3},fog:{time:1.25,energy:1.15}};
-function rng(seed){let a=(Number(seed)>>>0)||1;return function(){a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
+function rng(seed){let a=Number(seed)>>>0;return function(){a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
 function randInt(random,n){return Math.floor(random()*n)}
 function sampleScenario(seed,{obstacles=14,targets=2,wind=0,climate='clear'}={}){
  const random=rng(seed),blocked=new Set(),floor=new Set(),maxBlocks=Math.max(0,Math.min(30,Number(obstacles)||0));
@@ -55,8 +55,10 @@ function simulation(scenario,strategy){const random=rng((scenario.seed+1)*131+({
 }
 function average(values){return values.length?values.reduce((a,b)=>a+b,0)/values.length:0}
 function std(values){if(values.length<2)return 0;const mean=average(values);return Math.sqrt(values.reduce((s,x)=>s+(x-mean)**2,0)/(values.length-1))}
+// Normaliza corridas inválidas a 30 y limita las válidas a 1–100.
+function normalizeRuns(runs){const n=Number(runs);return Number.isFinite(n)?Math.max(1,Math.min(100,Math.floor(n))):30}
 function runComparison({seed=42,runs=30,obstacles=14,targets=2,wind=0,climate='clear'}={}){
- const records=[];const count=Math.max(1,Math.min(100,Math.floor(runs)));
+ const records=[];const count=normalizeRuns(runs);
  for(let i=0;i<count;i++){const scenario=sampleScenario((Number(seed)+i)>>>0,{obstacles,targets,wind,climate});
   for(const strategy of ['random','reactive','astar'])records.push({seed:scenario.seed,...simulation(scenario,strategy)})}
  const summary=['random','reactive','astar'].map(strategy=>{const rows=records.filter(r=>r.strategy===strategy), successes=rows.filter(r=>r.success);
@@ -65,7 +67,7 @@ function runComparison({seed=42,runs=30,obstacles=14,targets=2,wind=0,climate='c
  return {settings:{seed,runs:count,obstacles,targets,wind,climate},summary,records};
 }
 function clusterExperiment({seed=42,runs=30,k=3}={}){
- const count=Math.max(1,Math.min(100,Math.floor(runs))),results=[];
+ const count=normalizeRuns(runs),results=[];
  for(let i=0;i<count;i++){
   const random=rng(Number(seed)+i+1000);const anchors=[[2,8],[8,3],[9,9]],alerts=[];
   for(let j=0;j<45;j++){const a=anchors[j%3];alerts.push({x:Math.max(0,Math.min(11,a[0]+Math.round((random()-.5)*5))),y:Math.max(0,Math.min(11,a[1]+Math.round((random()-.5)*5)))})}
