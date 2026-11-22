@@ -4,14 +4,16 @@
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./benchmark.js'));else root.SkyML=factory(root.SkyBenchmark)})(typeof globalThis!=='undefined'?globalThis:this,function(B){
 'use strict';
 const climatePairs=[{time:1,energy:1},{time:1.1,energy:1.05},{time:1.4,energy:1.3},{time:1.25,energy:1.15}];
-function rowFeatures(steps,wind,climateFactor){return [1,steps,steps*wind,steps*(climateFactor-1)]}
+// Se agrega steps*wind*(clima-1): la energía simulada es pasos*(1+0.3*viento)*clima, que contiene
+// ese término de interacción viento×clima; sin él el modelo subajustaba (MAE energía test ~0.58 vs ~0.42).
+function rowFeatures(steps,wind,climateFactor){return [1,steps,steps*wind,steps*(climateFactor-1),steps*wind*(climateFactor-1)]}
 function solve(mat,rhs){const n=rhs.length,a=mat.map((row,i)=>row.concat(rhs[i]));for(let i=0;i<n;i++){
  let pivot=i;for(let j=i+1;j<n;j++)if(Math.abs(a[j][i])>Math.abs(a[pivot][i]))pivot=j;
  if(Math.abs(a[pivot][i])<1e-12)throw Error('Datos insuficientes para ajustar regresión');
  [a[i],a[pivot]]=[a[pivot],a[i]];const d=a[i][i];for(let c=i;c<=n;c++)a[i][c]/=d;
  for(let r=0;r<n;r++){if(r===i)continue;const factor=a[r][i];for(let c=i;c<=n;c++)a[r][c]-=factor*a[i][c]}
  }return a.map(row=>row[n])}
-function fit(records,output,feature){const dim=4,mat=Array.from({length:dim},()=>Array(dim).fill(0)),rhs=Array(dim).fill(0);
+function fit(records,output,feature){const dim=5,mat=Array.from({length:dim},()=>Array(dim).fill(0)),rhs=Array(dim).fill(0);
  for(const r of records){const x=rowFeatures(r.steps,r.wind,feature==='time'?r.timeFactor:r.energyFactor);for(let i=0;i<dim;i++){rhs[i]+=x[i]*r[output];for(let j=0;j<dim;j++)mat[i][j]+=x[i]*x[j]}}
  for(let i=0;i<dim;i++)mat[i][i]+=1e-8;return solve(mat,rhs)}
 function dot(a,b){return a.reduce((sum,v,i)=>sum+v*b[i],0)}
